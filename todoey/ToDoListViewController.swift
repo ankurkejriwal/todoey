@@ -14,6 +14,8 @@ class ToDoListViewController: UITableViewController {
     
     let defaults = UserDefaults.standard// Stores key value pairs consistently
     
+    //let defaults2 = UserDefaults.standard
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +24,7 @@ class ToDoListViewController: UITableViewController {
             itemArray = item
         }
         
-        if let item2 = defaults.array(forKey: "ToDoListArray2") as? [String]{
+        else if  let item2 = defaults.array(forKey: "motherTrucker") as? [String]{
             itemArray = item2
         }
         
@@ -89,13 +91,13 @@ class ToDoListViewController: UITableViewController {
     
     @IBAction func deletePressed(_ sender: UIBarButtonItem) {
         
-        let alert2 = UIAlertController.init(title: "Delete the last item?", message: "Are you sure you want to delete the last item?", preferredStyle: .alert)
+        let alert2 = UIAlertController.init(title: "Delete all entries?", message: "Are you sure you want to clear everything?", preferredStyle: .alert)
         
         let action2 = UIAlertAction(title: "Delete all entries", style: .default) { (action) in
             self.itemArray.removeAll()
             
-            self.defaults.set(self.itemArray, forKey: "ToDoListArray2")
-            
+            self.defaults.set(self.itemArray, forKey: "motherTrucker")
+           
             self.tableView.reloadData()
             
             

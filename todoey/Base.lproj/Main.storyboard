@@ -33,6 +33,12 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="ToDoEh" id="IBD-lO-1N7">
+                        <barButtonItem key="leftBarButtonItem" systemItem="trash" id="rXQ-8L-n9U">
+                            <color key="tintColor" red="0.99982970829999995" green="1" blue="0.97701886770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="deletePressed:" destination="xzf-9q-uX2" id="DZw-UE-7Yh"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="cjK-TE-CJ6">
                             <color key="tintColor" red="0.99982970829999995" green="1" blue="0.97701886770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>

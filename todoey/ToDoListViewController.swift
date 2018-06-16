@@ -22,6 +22,10 @@ class ToDoListViewController: UITableViewController {
             itemArray = item
         }
         
+        if let item2 = defaults.array(forKey: "ToDoListArray2") as? [String]{
+            itemArray = item2
+        }
+        
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -58,7 +62,7 @@ class ToDoListViewController: UITableViewController {
         var textField = UITextField()
         
         
-        let alert = UIAlertController.init(title: "Add New ToDoEh Item", message: "", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: "Add New ToDoEh Item", message: "Please type in below your new task you would like added to your list.", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             
@@ -82,5 +86,24 @@ class ToDoListViewController: UITableViewController {
         
         present(alert, animated: true, completion: nil)
     }
+    
+    @IBAction func deletePressed(_ sender: UIBarButtonItem) {
+        
+        let alert2 = UIAlertController.init(title: "Delete the last item?", message: "Are you sure you want to delete the last item?", preferredStyle: .alert)
+        
+        let action2 = UIAlertAction(title: "Delete all entries", style: .default) { (action) in
+            self.itemArray.removeAll()
+            
+            self.defaults.set(self.itemArray, forKey: "ToDoListArray2")
+            
+            self.tableView.reloadData()
+            
+            
+        }
+        alert2.addAction(action2)
+        present(alert2, animated: true, completion: nil)
+        
+        
+    }
+    
 }
-

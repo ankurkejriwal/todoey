@@ -7,21 +7,23 @@
 //
 
 import UIKit
+import CoreData
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: UITableViewController, UISearchBarDelegate {
     
-    var itemArray = [customDataModel]()
+    var itemArray = [Item]()
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("items.plist")
     
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
        // print (dataFilePath)
-        let newItem = customDataModel()
-        newItem.title = "Find Mike"
-        itemArray.append(newItem)
+      
         
         loadItems()
         
@@ -36,7 +38,7 @@ class ToDoListViewController: UITableViewController {
         
         let itemz = itemArray[indexPath.row]
 
-        cell.accessoryType = itemz.checkmark == true ? .checkmark : .none //Ternary Operator
+        cell.accessoryType = itemz.done == true ? .checkmark : .none //Ternary Operator
         
         
         return cell
@@ -50,7 +52,7 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //print (itemArray[indexPath.row])
-         itemArray[indexPath.row].checkmark = !itemArray[indexPath.row].checkmark
+         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
        saveItems()
         
@@ -69,9 +71,10 @@ class ToDoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             
             
-            let newItem = customDataModel()
-            newItem.title = textField.text!
             
+            let newItem = Item(context: self.context)
+            newItem.title = textField.text!
+            newItem.done = false
             self.itemArray.append(newItem)
             
            self.saveItems()
@@ -95,9 +98,8 @@ class ToDoListViewController: UITableViewController {
         let alert2 = UIAlertController.init(title: "Delete all entries?", message: "Are you sure you want to clear everything?", preferredStyle: .alert)
         
         let action2 = UIAlertAction(title: "Delete all entries", style: .default) { (action) in
-            self.itemArray.removeAll()
-            
-           self.saveItems()
+            self.deleteAll()
+            self.saveItems()
             
             
         }
@@ -107,42 +109,78 @@ class ToDoListViewController: UITableViewController {
         
     }
     
+    // MARK: - Data Handeling Methods
     func saveItems (){
-        let encoder = PropertyListEncoder()
+        
         
         do {
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!) //Writing data to a data file path
+          try context.save()
         }
             
         catch {
-            print("error encoding item array, \(error)")
+            
+            print("error saving the context \(error)")
+            
         }
         
         tableView.reloadData()
     }
     
-    func loadItems(){
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
         
-        if let data =  try? Data(contentsOf: dataFilePath!){
-            let decoder = PropertyListDecoder()
-            
-            do{
-                itemArray = try decoder.decode([customDataModel].self, from: data)
-                
-            }
-            
-            catch {
-                print("error encoding item array, \(error)")
-            }
+        
+        do{
+            itemArray = try context.fetch(request)
         }
         
+        catch{
         
+            print("error fetching data from context \(error)")
+            
+        }
         
+        tableView.reloadData()
+        }
+    
+    func deleteAll(){
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
         
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request as! NSFetchRequest<NSFetchRequestResult>)
+        do {
+            try context.execute(deleteRequest)
+            
+        }
+        catch{
+            print("error while deleting data from context \(error)")
+
         
+        }
+    
+      loadItems()
         
-        
-    }
+       }
     
 }
+// MARK:- Search Bar Method
+extension ToDoListViewController{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        loadItems(with: request)
+        }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+    }
+        
+    
+        
+    
+    }
+    
+

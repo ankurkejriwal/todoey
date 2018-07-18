@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		374F8D8420F02B0A00761FB9 /* CatergoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374F8D8320F02B0A00761FB9 /* CatergoryViewController.swift */; };
 		3759558F20D35865001263C6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759558E20D35865001263C6 /* AppDelegate.swift */; };
 		3759559120D35865001263C6 /* ToDoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759559020D35865001263C6 /* ToDoListViewController.swift */; };
 		3759559420D35865001263C6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3759559220D35865001263C6 /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		374F8D8320F02B0A00761FB9 /* CatergoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatergoryViewController.swift; sourceTree = "<group>"; };
 		3759558B20D35865001263C6 /* todoey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = todoey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3759558E20D35865001263C6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3759559020D35865001263C6 /* ToDoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListViewController.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 		375955A520D4CE8F001263C6 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				374F8D8320F02B0A00761FB9 /* CatergoryViewController.swift */,
 				3759559020D35865001263C6 /* ToDoListViewController.swift */,
 			);
 			path = Controllers;
@@ -173,6 +176,7 @@
 				375955AA20E48C64001263C6 /* DataModel.xcdatamodeld in Sources */,
 				3759559120D35865001263C6 /* ToDoListViewController.swift in Sources */,
 				3759558F20D35865001263C6 /* AppDelegate.swift in Sources */,
+				374F8D8420F02B0A00761FB9 /* CatergoryViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

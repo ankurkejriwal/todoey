@@ -14,7 +14,13 @@ class ToDoListViewController: UITableViewController, UISearchBarDelegate {
     var itemArray = [Item]()
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("items.plist")
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var selectedCatergory : Catergory? {
+        didSet{
+            loadItems()
+        }
+    }
+    
+     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
 
     override func viewDidLoad() {
@@ -22,10 +28,11 @@ class ToDoListViewController: UITableViewController, UISearchBarDelegate {
         
         
         
+        
        // print (dataFilePath)
       
         
-        loadItems()
+        
         
         
         
@@ -76,6 +83,7 @@ class ToDoListViewController: UITableViewController, UISearchBarDelegate {
             newItem.title = textField.text!
             newItem.done = false
             self.itemArray.append(newItem)
+            newItem.parentCatergory = self.selectedCatergory
             
            self.saveItems()
         
@@ -126,9 +134,20 @@ class ToDoListViewController: UITableViewController, UISearchBarDelegate {
         tableView.reloadData()
     }
     
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate : NSPredicate? = nil){
         
         
+        let CatergoryPredicate = NSPredicate(format: "parentCatergory.name MATCHES %@",selectedCatergory!.name!)
+        
+        if let additonalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [CatergoryPredicate,additonalPredicate])
+        }
+        else{
+            request.predicate = CatergoryPredicate
+        }
+        
+        
+      
         do{
             itemArray = try context.fetch(request)
         }
@@ -167,14 +186,24 @@ extension ToDoListViewController{
         
         let request : NSFetchRequest<Item> = Item.fetchRequest()
         
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        var predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
         
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        loadItems(with: request)
+        loadItems(with: request, predicate: predicate)
         }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchBar.text?.count == 0{
+            loadItems() // Fetches all of the items from persistent container
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()// No long have cursor and keyboard should disappear
+            }
+            
+            
+        }
         
     }
         

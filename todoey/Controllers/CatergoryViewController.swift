@@ -7,17 +7,16 @@
 //
 
 import UIKit
-import CoreData
-
+import RealmSwift
 
 class CatergoryViewController: UITableViewController {
 
-    
-    var catergoryArray = [Catergory]()
+    let realm = try! Realm()
+    var catergoryArray : Results<catergory>?
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("catergory.plist")
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    //let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,13 +28,15 @@ class CatergoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "catergoryCell", for: indexPath)
         
-        cell.textLabel?.text = catergoryArray[indexPath.row].name
+        
+        
+        cell.textLabel?.text = catergoryArray?[indexPath.row].name ?? "No Catergories Added"
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return catergoryArray.count
+        return catergoryArray?.count ?? 1 //if not nill return catergories.count else return one
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -47,7 +48,10 @@ class CatergoryViewController: UITableViewController {
         
         if let indexPath = tableView.indexPathForSelectedRow {
             
-            destinationVC.selectedCatergory = catergoryArray[indexPath.row]//get the index for the selected cell
+            destinationVC.selectedCatergory = catergoryArray?[indexPath.row]
+            
+            
+            //get the index for the selected cell
             
         }
         
@@ -63,10 +67,9 @@ class CatergoryViewController: UITableViewController {
             
             let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
                 
-                let newItem = Catergory(context: self.context)
+                let newItem = catergory()
                 newItem.name = textField.text!
-                self.catergoryArray.append(newItem)
-                self.saveNames()
+                self.save(catergory: newItem)
             }
             alert.addAction(action)
             
@@ -80,10 +83,13 @@ class CatergoryViewController: UITableViewController {
         }
     
     
-    func saveNames(){
+    func save(catergory: catergory){
         
         do {
-            try context.save()
+            try realm.write{
+                realm.add(catergory)
+                
+            }
         }
         catch {
             print("error saving the context \(error)")
@@ -92,14 +98,10 @@ class CatergoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    func loadCatergory(with request: NSFetchRequest<Catergory> = Catergory.fetchRequest()){
+    func loadCatergory(){
         
-        do{
-            catergoryArray = try context.fetch(request)
-        }
-        catch{
-            print("error fetching data from context \(error)")
-        }
+        catergoryArray = realm.objects(catergory.self)
+       
         tableView.reloadData()
     }
 }
